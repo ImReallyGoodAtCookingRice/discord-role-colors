@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Role Colors</title>
+    <title>Role Colors</title>
     <style>
         body {
             background-color: #000000;
@@ -17,46 +17,57 @@
 
         .document-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
         }
 
         h1 {
             text-align: center;
-            border-bottom: 2px solid #333;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
             font-weight: 300;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            margin-bottom: 50px;
+            font-size: 2.5em;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .section-header {
+            font-size: 1.8em;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 5px solid;
         }
 
         .color-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
         }
 
         .color-card {
             display: flex;
             align-items: center;
             background-color: #111;
-            border: 1px solid #333;
-            padding: 15px;
+            border: 1px solid #222;
+            padding: 12px;
             border-radius: 8px;
             transition: transform 0.2s, background-color 0.2s;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
         .color-card:hover {
             transform: translateY(-2px);
-            background-color: #222;
+            background-color: #1a1a1a;
+            border-color: #444;
         }
 
         .swatch {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            margin-right: 20px;
-            border: 2px solid #333;
+            margin-right: 15px;
             flex-shrink: 0;
         }
 
@@ -66,119 +77,162 @@
 
         .hex-code {
             font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: bold;
             color: #fff;
             margin: 0;
         }
 
         .color-name {
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: #aaa;
-            margin-top: 4px;
-        }
-
-        .copy-hint {
-            font-size: 0.8em;
-            color: #555;
-            margin-top: 30px;
-            text-align: center;
+            margin-top: 2px;
         }
 
         .notification {
             position: fixed;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #ffffff;
+            background-color: #fff;
             color: #000;
-            padding: 10px 20px;
-            border-radius: 30px;
+            padding: 10px 25px;
+            border-radius: 50px;
             font-weight: bold;
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
         .notification.show {
             opacity: 1;
         }
+
+        /* Section Specific Styles */
+        .header-vibrant { border-color: #FF7675; color: #FF7675; }
+        .header-neon { border-color: #00FFCC; color: #00FFCC; text-shadow: 0 0 8px rgba(0, 255, 204, 0.4); }
+        .header-nature { border-color: #556B2F; color: #8FBC8F; }
+
+        /* Neon Swatch Effect */
+        .neon-effect { box-shadow: 0 0 10px currentColor; border: 2px solid #fff; }
+        
+        /* Vibrant Swatch Effect */
+        .vibrant-effect { border: 2px solid rgba(255,255,255,0.2); }
+
+        /* Nature Swatch Effect */
+        .nature-effect { border: 3px solid #333; opacity: 0.9; }
+
     </style>
 </head>
 <body>
 
     <div class="document-container">
-        <h1>Discord Role Color Palette</h1>
-        
-        <div class="color-grid" id="colorGrid">
-            <!-- Colors will be inserted here by JS -->
-        </div>
+        <h1>Role Colors</h1>
 
-        <p class="copy-hint">Click any card to copy the Hex Code to your clipboard.</p>
+        <!-- Vibrant Section -->
+        <h2 class="section-header header-vibrant">Smooth-ish idk</h2>
+        <div class="color-grid" id="grid-vibrant"></div>
+
+        <!-- Neon Section -->
+        <h2 class="section-header header-neon">Neon or Glow</h2>
+        <div class="color-grid" id="grid-neon"></div>
+
+        <!-- Nature Section -->
+        <h2 class="section-header header-nature">Toned down colors</h2>
+        <div class="color-grid" id="grid-nature"></div>
+
+        <div style="text-align: center; margin-top: 50px; color: #555; font-size: 0.9em;">
+            Click any color card to copy the hex code.
+        </div>
     </div>
 
     <div class="notification" id="notification">Copied!</div>
 
     <script>
-        const colors = [
-            { hex: "#FF7675", name: "Soft Coral" },
-            { hex: "#FF9F43", name: "Sunset Orange" },
-            { hex: "#FDCB6E", name: "Mustard Yellow" },
-            { hex: "#55E6C1", name: "Mint Green" },
-            { hex: "#74B9FF", name: "Sky Blue" },
-            { hex: "#A29BFE", name: "Lavender Fog" },
-            { hex: "#FD79A8", name: "Bubblegum Pink" },
-            { hex: "#81ECEC", name: "Glacier Blue" },
-            { hex: "#00CEC9", name: "Robin's Egg" },
-            { hex: "#0984E3", name: "Electric Blue" },
-            { hex: "#6C5CE7", name: "Royal Purple" },
-            { hex: "#E84393", name: "Deep Rose" },
-            { hex: "#D63031", name: "Valentine Red" },
-            { hex: "#E17055", name: "Burnt Sienna" },
-            { hex: "#00B894", name: "Emerald" },
-            { hex: "#27AE60", name: "Jungle Green" },
-            { hex: "#B2BEC3", name: "Soothing Grey" },
-            { hex: "#DFE6E9", name: "Silver Mist" },
-            { hex: "#FF9FF3", name: "Cotton Candy" },
-            { hex: "#FECA57", name: "Goldenrod" },
-            { hex: "#54A0FF", name: "Azure" },
-            { hex: "#5F27CD", name: "Deep Violet" },
-            { hex: "#48DBFB", name: "Cyan Pop" },
-            { hex: "#1DD1A1", name: "Wild Tea" },
-            { hex: "#FF6B6B", name: "Pastel Red" },
-            { hex: "#F8EFBA", name: "Vanilla Cream" }
+        const vibrantColors = [
+            { hex: "#FF7675", name: "Soft Coral" }, { hex: "#FF9F43", name: "Sunset Orange" },
+            { hex: "#FDCB6E", name: "Mustard Yellow" }, { hex: "#55E6C1", name: "Mint Green" },
+            { hex: "#74B9FF", name: "Sky Blue" }, { hex: "#A29BFE", name: "Lavender Fog" },
+            { hex: "#FD79A8", name: "Bubblegum Pink" }, { hex: "#81ECEC", name: "Glacier Blue" },
+            { hex: "#00CEC9", name: "Robin's Egg" }, { hex: "#0984E3", name: "Electric Blue" },
+            { hex: "#6C5CE7", name: "Royal Purple" }, { hex: "#E84393", name: "Deep Rose" },
+            { hex: "#D63031", name: "Valentine Red" }, { hex: "#E17055", name: "Burnt Sienna" },
+            { hex: "#00B894", name: "Emerald" }, { hex: "#27AE60", name: "Jungle Green" },
+            { hex: "#B2BEC3", name: "Soothing Grey" }, { hex: "#DFE6E9", name: "Silver Mist" },
+            { hex: "#FF9FF3", name: "Cotton Candy" }, { hex: "#FECA57", name: "Goldenrod" },
+            { hex: "#54A0FF", name: "Azure" }, { hex: "#5F27CD", name: "Deep Violet" },
+            { hex: "#48DBFB", name: "Cyan Pop" }, { hex: "#1DD1A1", name: "Wild Tea" },
+            { hex: "#FF6B6B", name: "Pastel Red" }, { hex: "#F8EFBA", name: "Vanilla Cream" }
         ];
 
-        const grid = document.getElementById('colorGrid');
-        const notification = document.getElementById('notification');
+        const neonColors = [
+            { hex: "#FF0055", name: "Cyber Rose" }, { hex: "#00FFCC", name: "Tron Cyan" },
+            { hex: "#D60270", name: "Deep Magenta" }, { hex: "#9B4F96", name: "Retro Violet" },
+            { hex: "#0038A8", name: "Hyper Blue" }, { hex: "#F5D300", name: "Laser Yellow" },
+            { hex: "#9400D3", name: "Dark Violet" }, { hex: "#FF1493", name: "Deep Pink" },
+            { hex: "#00FA9A", name: "Spring Green" }, { hex: "#1E90FF", name: "Dodger Blue" },
+            { hex: "#FF4500", name: "Orange Red" }, { hex: "#ADFF2F", name: "Green Yellow" },
+            { hex: "#FF00FF", name: "Pure Magenta" }, { hex: "#00FFFF", name: "Electric Aqua" },
+            { hex: "#7FFF00", name: "Chartreuse" }, { hex: "#FF69B4", name: "Hot Pink" },
+            { hex: "#8A2BE2", name: "Blue Violet" }, { hex: "#40E0D0", name: "Turquoise" },
+            { hex: "#FFD700", name: "Gold" }, { hex: "#32CD32", name: "Lime Green" },
+            { hex: "#DC143C", name: "Crimson" }, { hex: "#4169E1", name: "Royal Blue" },
+            { hex: "#00BFFF", name: "Deep Sky Blue" }, { hex: "#9932CC", name: "Dark Orchid" },
+            { hex: "#20B2AA", name: "Light Sea Green" }, { hex: "#FF6347", name: "Tomato" }
+        ];
 
-        colors.forEach(color => {
-            const card = document.createElement('div');
-            card.className = 'color-card';
-            card.onclick = () => copyToClipboard(color.hex);
+        const natureColors = [
+            { hex: "#556B2F", name: "Dark Olive" }, { hex: "#8B4513", name: "Saddle Brown" },
+            { hex: "#228B22", name: "Forest Green" }, { hex: "#DAA520", name: "Goldenrod" },
+            { hex: "#B8860B", name: "Dark Goldenrod" }, { hex: "#CD853F", name: "Peru" },
+            { hex: "#D2691E", name: "Chocolate" }, { hex: "#8FBC8F", name: "Dark Sea Green" },
+            { hex: "#4682B4", name: "Steel Blue" }, { hex: "#BC8F8F", name: "Rosy Brown" },
+            { hex: "#5F9EA0", name: "Cadet Blue" }, { hex: "#9ACD32", name: "Yellow Green" },
+            { hex: "#6B8E23", name: "Olive Drab" }, { hex: "#A0522D", name: "Sienna" },
+            { hex: "#2E8B57", name: "Sea Green" }, { hex: "#66CDAA", name: "Medium Aqua" },
+            { hex: "#DEB887", name: "Burly Wood" }, { hex: "#F4A460", name: "Sandy Brown" },
+            { hex: "#555555", name: "Dim Grey" }, { hex: "#BDB76B", name: "Dark Khaki" },
+            { hex: "#808000", name: "Olive" }, { hex: "#708090", name: "Slate Gray" },
+            { hex: "#778899", name: "Light Slate" }, { hex: "#B0C4DE", name: "Light Steel" },
+            { hex: "#3CB371", name: "Medium Sea" }, { hex: "#FA8072", name: "Salmon" }
+        ];
 
-            const swatch = document.createElement('div');
-            swatch.className = 'swatch';
-            swatch.style.backgroundColor = color.hex;
-            swatch.style.boxShadow = `0 0 10px ${color.hex}44`; // Adds a subtle glow
+        function renderSection(data, containerId, styleClass) {
+            const container = document.getElementById(containerId);
+            data.forEach(color => {
+                const card = document.createElement('div');
+                card.className = 'color-card';
+                card.onclick = () => copyToClipboard(color.hex);
 
-            const info = document.createElement('div');
-            info.className = 'info';
+                const swatch = document.createElement('div');
+                swatch.className = `swatch ${styleClass}`;
+                swatch.style.backgroundColor = color.hex;
+                swatch.style.color = color.hex; // For box-shadow inheritance
 
-            const hexCode = document.createElement('div');
-            hexCode.className = 'hex-code';
-            hexCode.textContent = color.hex;
+                const info = document.createElement('div');
+                info.className = 'info';
 
-            const name = document.createElement('div');
-            name.className = 'color-name';
-            name.textContent = color.name;
+                const hexCode = document.createElement('div');
+                hexCode.className = 'hex-code';
+                hexCode.textContent = color.hex;
 
-            info.appendChild(hexCode);
-            info.appendChild(name);
-            card.appendChild(swatch);
-            card.appendChild(info);
-            grid.appendChild(card);
-        });
+                const name = document.createElement('div');
+                name.className = 'color-name';
+                name.textContent = color.name;
+
+                info.appendChild(hexCode);
+                info.appendChild(name);
+                card.appendChild(swatch);
+                card.appendChild(info);
+                container.appendChild(card);
+            });
+        }
+
+        renderSection(vibrantColors, 'grid-vibrant', 'vibrant-effect');
+        renderSection(neonColors, 'grid-neon', 'neon-effect');
+        renderSection(natureColors, 'grid-nature', 'nature-effect');
 
         function copyToClipboard(text) {
             const tempInput = document.createElement('input');
@@ -188,14 +242,11 @@
             document.execCommand('copy');
             document.body.removeChild(tempInput);
 
-            showNotification(`Copied ${text}`);
-        }
-
-        function showNotification(msg) {
-            notification.textContent = msg;
-            notification.classList.add('show');
+            const notif = document.getElementById('notification');
+            notif.textContent = `Copied ${text}`;
+            notif.classList.add('show');
             setTimeout(() => {
-                notification.classList.remove('show');
+                notif.classList.remove('show');
             }, 2000);
         }
     </script>
